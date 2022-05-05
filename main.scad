@@ -26,21 +26,31 @@ module N() {
     translate([30, 30]) rotate(180) U();
 }
 
-module plate() {
-    translate([0, 0, 0])difference() {
-        linear_extrude(1) square(30);
-        linear_extrude(2) children();
-    }
-    
+module skew(s=1) {
+    multmatrix([
+        [cos(30), 0, 0, 0],
+        [s*sin(30), 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ]) children();
 }
 
-projection()
-rotate(-atan2(1, sqrt(2)/2), [1, 0, 0])
-rotate(45, [0, 0, 1])
-union() {
-    translate([-30, 0, 0]) rotate(90, [1, 0, 0]) plate() P();
-    rotate(120, [1, -1, -1]) plate() S();
-    translate([-30, -30, 0]) plate() U();
-    translate([-29, 0, -29]) rotate(120, [1, -1, -1]) plate() A();
-    translate([-30, -29, -29]) rotate(90, [1, 0, 0]) plate() N();
+module shape() {
+    polygon([
+        [0, 30 + 30 * sin(30)],
+        [30 * cos(30), 30],
+        [30 * cos(30), -30],
+        [0, -30 - 30 * sin(30)],
+        [-30 * cos(30), -30],
+        [-30 * cos(30), 30],
+    ]);
+}
+
+difference() {
+    shape();
+    translate([-30 * cos(30), 0]) skew() P();
+    translate([0, 30 * sin(30)]) skew(-1) S();
+    translate([0, -30 * sin(30)]) rotate(60) skew(-1) U();
+    translate([-30 * cos(30), -60 * sin(30)]) skew(-1) A();
+    translate([0, -90 * sin(30)]) skew() N();
 }
