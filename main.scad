@@ -46,11 +46,18 @@ module shape() {
     ]);
 }
 
-difference() {
-    shape();
+module letters() {
     translate([-30 * cos(30), 0]) skew() P();
     translate([0, 30 * sin(30)]) skew(-1) S();
     translate([0, -30 * sin(30)]) rotate(60) skew(-1) U();
     translate([-30 * cos(30), -60 * sin(30)]) skew(-1) A();
     translate([0, -90 * sin(30)]) skew() N();
+}
+
+difference() {
+    minkowski() {
+        shape();
+        circle(r=1, $fn=60);
+    }
+    letters();
 }
